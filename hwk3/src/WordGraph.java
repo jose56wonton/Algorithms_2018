@@ -25,14 +25,14 @@ public class WordGraph {
                 }
             }
         }
-        //Remove Duplicate Edges
-        //removeEdgeRedundancy();
     }
     public int numberOfComponents(){
+        // This is the number of edges/2 since all the edges will have double entries for when each vertex is source and when each vertex is destination
         return this.edges.size()/2;
     }
-    public ArrayList<String> shortestPath(String word1, String word2){
 
+    // This is my Dijkstra implementation. It depends on the computePaths method
+    public ArrayList<String> shortestPath(String word1, String word2){
         ArrayList<String> path = new ArrayList();
         Vertex source = this.findVertexByString(word1);
         computePaths(source);
@@ -42,6 +42,7 @@ public class WordGraph {
         Collections.reverse(path);
         return path;
     }
+    // This method returns the vertex with a certain name
     private Vertex findVertexByString(String s){
             for(Vertex v : this.getVertexes()) {
                 if(v.getName()==(s)) {
@@ -50,6 +51,8 @@ public class WordGraph {
             }
             return null;
     }
+    // This method computes paths given a certain source vertex
+    // It is fundamental in my shortestPath method
     private void computePaths(Vertex source){
         source.setMinDistance(0.0);
         PriorityQueue<Vertex> q = new PriorityQueue<Vertex>();
@@ -62,7 +65,6 @@ public class WordGraph {
                     double distanceThroughU = u.getMinDistance() + 1;
                     if (distanceThroughU < v.getMinDistance()) {
                         q.remove(v);
-                        System.out.println(distanceThroughU);
                         v.setMinDistance(distanceThroughU);
                         v.setPrevious(u);
                         q.add(v);
@@ -71,28 +73,15 @@ public class WordGraph {
             }
         }
     }
-    private void removeEdgeRedundancy(){
-        for(int i = 0; i < edges.size(); i++){
-            for(int j = 0; j < edges.size(); j++){
-                if(j != i ){
-                    Edge e1 = edges.get(i);
-                    Edge e2 = edges.get(j);
-                    if(e1.source.name == e2.destination.name && e1.destination.name == e2.source.name) {
-                        edges.remove(e2);
-                    }
-                }
-            }
-        }
-    }
+    // This is an implementation of the Levenshtein distance algorithm
+    // I use it to determine whether two vertexes should be connected with an edge
     private static int distance(String a, String b) {
         a = a.toLowerCase();
         b = b.toLowerCase();
-        // i == 0
         int [] costs = new int [b.length() + 1];
         for (int j = 0; j < costs.length; j++)
             costs[j] = j;
         for (int i = 1; i <= a.length(); i++) {
-            // j == 0; nw = lev(i - 1, j)
             costs[0] = i;
             int nw = i - 1;
             for (int j = 1; j <= b.length(); j++) {
@@ -103,10 +92,10 @@ public class WordGraph {
         }
         return costs[b.length()];
     }
-    public List<Vertex> getVertexes() {
+    private List<Vertex> getVertexes() {
         return vertexes;
     }
-    public List<Edge> getEdges() {
+    private List<Edge> getEdges() {
         return edges;
     }
     private class Edge  {
@@ -161,9 +150,14 @@ public class WordGraph {
     }
 
     public static void main(String [] args){
+
         List<String> words = Arrays.asList("pain","gain","pan","span","gait","wait");
+
         WordGraph w = new WordGraph(words);
-        System.out.print(w.shortestPath("pain","span"));
+
+        System.out.printf("Number of Components: %s",w.numberOfComponents());
+        System.out.printf("\nShortest Path from pain to span: %s",w.shortestPath("pain","span"));
+
 
     }
 }
