@@ -1,2 +1,3 @@
-# Algorithms_2018
-This is a repo for my Algorithms homework.
+# Algorithms
+
+This is just a repo to hold my algorithms homework for easy record taking :)
